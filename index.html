@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alejandro Valdivia — Video Editor & Producer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #080808;
+      --cream: #F5F0E8;
+      --gold: #E8B84B;
+      --gray: #8A8A8A;
+      --dark-gray: #1A1A1A;
+      --mid: #2A2A2A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, opacity .2s;
+      mix-blend-mode: difference;
+    }
+    #cursor::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 4px; height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #cursor.big { width: 70px; height: 70px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 48px;
+      background: linear-gradient(to bottom, rgba(8,8,8,.9) 0%, transparent 100%);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 18px;
+      letter-spacing: -.5px;
+      color: var(--cream);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-size: 13px; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 500;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 32px; height: 1px;
+      background: var(--gold);
+    }
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(64px, 10vw, 140px);
+      font-weight: 700;
+      line-height: .92;
+      letter-spacing: -3px;
+      color: var(--cream);
+    }
+    h1 em {
+      font-style: normal;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--cream);
+    }
+    .hero-sub {
+      margin-top: 40px;
+      max-width: 480px;
+      font-size: 16px; font-weight: 300;
+      line-height: 1.7;
+      color: var(--gray);
+    }
+    .hero-cta {
+      margin-top: 48px;
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: .05em; text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all .25s;
+    }
+    .btn-primary {
+      background: var(--gold); color: var(--black);
+    }
+    .btn-primary:hover { background: #f0c55a; transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1px solid rgba(245,240,232,.2); color: var(--cream);
+    }
+    .btn-ghost:hover { border-color: var(--cream); transform: translateY(-2px); }
+
+    .hero-scroll {
+      position: absolute; bottom: 40px; right: 48px;
+      writing-mode: vertical-rl;
+      font-size: 11px; letter-spacing: .15em;
+      color: var(--gray); text-transform: uppercase;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-scroll::after {
+      content: ''; display: block;
+      width: 1px; height: 60px;
+      background: var(--gray);
+      animation: scrollLine 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%,100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(.4); opacity: .3; }
+    }
+
+    .hero-bg-text {
+      position: absolute; bottom: -20px; right: -10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(100px, 20vw, 280px);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(245,240,232,.04);
+      line-height: 1;
+      pointer-events: none; user-select: none;
+      letter-spacing: -6px;
+    }
+
+    /* ── SECTIONS COMMON ── */
+    section { padding: 100px 48px; }
+    .section-label {
+      font-size: 11px; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 16px;
+    }
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700; letter-spacing: -1.5px;
+      line-height: 1.05;
+      margin-bottom: 48px;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--dark-gray); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    .about-text p {
+      font-size: 16px; font-weight: 300; line-height: 1.8;
+      color: var(--gray); margin-bottom: 20px;
+    }
+    .about-text p strong { color: var(--cream); font-weight: 500; }
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .stat-block {
+      border-top: 1px solid rgba(245,240,232,.08);
+      padding-top: 24px;
+    }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px; font-weight: 700;
+      color: var(--gold); letter-spacing: -2px;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 13px; color: var(--gray);
+      margin-top: 8px; line-height: 1.4;
+    }
+
+    /* ── SERVICES / SKILLS ── */
+    #skills { background: var(--black); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .skill-card {
+      background: var(--dark-gray);
+      padding: 40px 32px;
+      transition: background .25s;
+      position: relative; overflow: hidden;
+    }
+    .skill-card:hover { background: var(--mid); }
+    .skill-icon {
+      font-size: 28px; margin-bottom: 20px; display: block;
+    }
+    .skill-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px; font-weight: 600;
+      margin-bottom: 12px; color: var(--cream);
+    }
+    .skill-desc {
+      font-size: 14px; color: var(--gray);
+      line-height: 1.7;
+    }
+    .skill-tags {
+      margin-top: 20px;
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .tag {
+      font-size: 11px; letter-spacing: .05em;
+      padding: 4px 10px;
+      border: 1px solid rgba(232,184,75,.25);
+      color: var(--gold); border-radius: 2px;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--dark-gray); }
+    .projects-bento {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 2px;
+    }
+    .project-card {
+      background: var(--mid);
+      padding: 48px 40px;
+      position: relative; overflow: hidden;
+      transition: background .3s;
+      cursor: none;
+    }
+    .project-card:hover { background: #303030; }
+    .project-card.featured {
+      grid-row: span 2;
+    }
+    .rec-dot {
+      display: none;
+      position: absolute; top: 24px; right: 24px;
+      width: 10px; height: 10px;
+      background: #e74c3c;
+      border-radius: 50%;
+      animation: blink 1s ease-in-out infinite;
+    }
+    .project-card:hover .rec-dot { display: block; }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: .2; }
+    }
+    .project-num {
+      font-size: 11px; letter-spacing: .2em;
+      color: var(--gray); margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+    .project-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px; font-weight: 700;
+      letter-spacing: -.5px; margin-bottom: 16px;
+      color: var(--cream);
+    }
+    .project-card.featured .project-title {
+      font-size: 36px;
+    }
+    .project-desc {
+      font-size: 14px; color: var(--gray);
+      line-height: 1.7; margin-bottom: 32px;
+    }
+    .project-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      transition: gap .2s;
+    }
+    .project-link:hover { gap: 14px; }
+    .project-platform {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 40px;
+    }
+    .platform-pill {
+      font-size: 11px; padding: 4px 12px;
+      background: rgba(232,184,75,.12);
+      border: 1px solid rgba(232,184,75,.2);
+      color: var(--gold); border-radius: 20px;
+    }
+
+    /* ── TOOLS ── */
+    #tools { background: var(--black); }
+    .tools-row {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .tool-pill {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 500;
+      padding: 10px 20px;
+      border: 1px solid rgba(245,240,232,.1);
+      color: var(--cream); border-radius: 2px;
+      transition: all .2s;
+    }
+    .tool-pill:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--dark-gray); }
+    .contact-inner {
+      max-width: 640px;
+    }
+    .contact-inner p {
+      font-size: 16px; color: var(--gray);
+      line-height: 1.8; margin-bottom: 40px;
+    }
+    .contact-links {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .contact-item {
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 24px;
+      background: var(--mid);
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .contact-item:hover { background: #303030; }
+    .contact-icon { font-size: 20px; width: 32px; text-align: center; }
+    .contact-info {}
+    .contact-label {
+      font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 4px;
+    }
+    .contact-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 500; color: var(--cream);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 48px;
+      border-top: 1px solid rgba(245,240,232,.06);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer p { font-size: 13px; color: var(--gray); }
+    footer span { color: var(--gold); }
+
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+      section { padding: 72px 24px; }
+      #hero { padding: 100px 24px 80px; }
+      h1 { letter-spacing: -1px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .projects-bento { grid-template-columns: 1fr; }
+      .project-card.featured { grid-row: span 1; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+      body { cursor: auto; }
+      #cursor { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">AV<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">Sobre mí</a></li>
+    <li><a href="#skills">Servicios</a></li>
+    <li><a href="#projects">Proyectos</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">Video Producer & Editor — Bolivia</div>
+  <h1>
+    ALEJANDRO<br>
+    <em>VALDIVIA</em>
+  </h1>
+  <p class="hero-sub">
+    Produzco y edito contenido audiovisual que conecta con audiencias reales.
+    Desde calles bolivianas hasta pantallas de todo el mundo.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">Ver proyectos →</a>
+    <a href="#contact" class="btn btn-ghost">Contáctame</a>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+  <div class="hero-bg-text">VIDEO</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="section-label">Sobre mí</div>
+      <h2>Ojo visual.<br>Mente creativa.</h2>
+      <p>Soy <strong>Alejandro Valdivia Montalvo</strong>, productor y editor de video con base en Bolivia. Me especializo en crear contenido audiovisual auténtico para marcas, emprendimientos y canales digitales.</p>
+      <p>Trabajo como colaborador del canal <strong>Choco en Bolivia</strong>, donde me encargo de la grabación, dirección y edición de cada pieza — desde la idea hasta la publicación.</p>
+      <p>Cuento con experiencia en producción freelance para negocios locales, cobertura de eventos y contenido optimizado para plataformas como TikTok, Instagram Reels y YouTube Shorts.</p>
+    </div>
+    <div class="about-stats reveal">
+      <div class="stat-block">
+        <div class="stat-num">3+</div>
+        <div class="stat-label">Años de experiencia en producción audiovisual</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">100+</div>
+        <div class="stat-label">Videos producidos y editados</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">TikTok</div>
+        <div class="stat-label">Canal activo: @choco.en.bolivia</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">BOL</div>
+        <div class="stat-label">Disponible para trabajo remoto desde Bolivia (GMT-4)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Servicios</div>
+  <h2>Lo que hago</h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <span class="skill-icon">🎬</span>
+      <div class="skill-title">Producción de Video</div>
+      <p class="skill-desc">Planificación, dirección en campo, selección de locaciones y captura de imágenes con ojo narrativo.</p>
+      <div class="skill-tags">
+        <span class="tag">Grabación</span>
+        <span class="tag">Dirección</span>
+        <span class="tag">Exteriores</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">✂️</span>
+      <div class="skill-title">Edición & Post</div>
+      <p class="skill-desc">Edición profesional con color grading, musicalización, subtítulos y efectos. Entrega lista para publicar.</p>
+      <div class="skill-tags">
+        <span class="tag">CapCut Pro</span>
+        <span class="tag">Premiere</span>
+        <span class="tag">DaVinci</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">📱</span>
+      <div class="skill-title">Contenido para RRSS</div>
+      <p class="skill-desc">Videos optimizados para TikTok, Instagram Reels y YouTube Shorts. Formatos que generan engagement.</p>
+      <div class="skill-tags">
+        <span class="tag">TikTok</span>
+        <span class="tag">Reels</span>
+        <span class="tag">Shorts</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🏢</span>
+      <div class="skill-title">Video para Marcas</div>
+      <p class="skill-desc">Produzco contenido promocional para emprendimientos y negocios que quieren crecer en digital.</p>
+      <div class="skill-tags">
+        <span class="tag">Marca personal</span>
+        <span class="tag">Emprendimientos</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🎭</span>
+      <div class="skill-title">Cobertura de Eventos</div>
+      <p class="skill-desc">Bodas, graduaciones, eventos corporativos y culturales. Documentación audiovisual de calidad.</p>
+      <div class="skill-tags">
+        <span class="tag">Social</span>
+        <span class="tag">Corporativo</span>
+        <span class="tag">Cultural</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🌎</span>
+      <div class="skill-title">Trabajo Remoto</div>
+      <p class="skill-desc">Disponible para proyectos remotos internacionales. Entrega puntual, comunicación fluida.</p>
+      <div class="skill-tags">
+        <span class="tag">GMT-4</span>
+        <span class="tag">EST compatible</span>
+        <span class="tag">Freelance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Proyectos</div>
+  <h2>Trabajo destacado</h2>
+  <div class="projects-bento">
+
+    <div class="project-card featured reveal">
+      <div class="rec-dot"></div>
+      <div class="project-num">01 — Principal</div>
+      <div class="project-platform">
+        <span class="platform-pill">TikTok</span>
+        <span class="platform-pill">Contenido Digital</span>
+      </div>
+      <div class="project-title">Choco en Bolivia</div>
+      <p class="project-desc">Canal dedicado a mostrar la cultura, gastronomía y turismo boliviano. Me encargo de la producción integral: desde la grabación en campo hasta la edición final y publicación. Cada video cuenta una historia auténtica de Bolivia para audiencias globales.</p>
+      <a href="https://www.tiktok.com/@choco.en.bolivia" target="_blank" class="project-link">
+        Ver canal en TikTok →
+      </a>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="rec-dot"></div>
+      <div class="project-num">02 — Freelance</div>
+      <div class="project-platform">
+        <span class="platform-pill">Branding</span>
+        <span class="platform-pill">RRSS</span>
+      </div>
+      <div class="project-title">Emprendimientos Locales</div>
+      <p class="project-desc">Videos promocionales para negocios y marcas personales bolivianas. Contenido adaptado para cada plataforma con resultados medibles en alcance y engagement.</p>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="rec-dot"></div>
+      <div class="project-num">03 — Eventos</div>
+      <div class="project-platform">
+        <span class="platform-pill">Cobertura</span>
+        <span class="platform-pill">Documental</span>
+      </div>
+      <div class="project-title">Cobertura de Eventos</div>
+      <p class="project-desc">Documentación audiovisual profesional de eventos sociales, corporativos y culturales en Bolivia. Edición cinematográfica con entrega rápida.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="section-label">Herramientas</div>
+  <h2>Mi stack</h2>
+  <div class="tools-row reveal">
+    <div class="tool-pill">CapCut Pro</div>
+    <div class="tool-pill">Adobe Premiere Pro</div>
+    <div class="tool-pill">DaVinci Resolve</div>
+    <div class="tool-pill">After Effects</div>
+  </div>
+  <div class="tools-row reveal">
+    <div class="tool-pill">TikTok Creator Studio</div>
+    <div class="tool-pill">Instagram / Meta</div>
+    <div class="tool-pill">YouTube Studio</div>
+    <div class="tool-pill">Canva</div>
+  </div>
+  <div class="tools-row reveal">
+    <div class="tool-pill">Fotografía en campo</div>
+    <div class="tool-pill">Color Grading</div>
+    <div class="tool-pill">Motion Graphics</div>
+    <div class="tool-pill">Audio Mix</div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Contacto</div>
+    <h2>Trabajemos juntos</h2>
+    <p>¿Tienes un proyecto, una marca o un canal que necesita contenido de calidad? Escríbeme — respondo rápido y trabajo en remoto para cualquier zona horaria.</p>
+    <div class="contact-links">
+      <a href="https://wa.me/59172777632" target="_blank" class="contact-item reveal">
+        <span class="contact-icon">📱</span>
+        <div class="contact-info">
+          <div class="contact-label">WhatsApp / Cel</div>
+          <div class="contact-value">+591 72777632</div>
+        </div>
+      </a>
+      <a href="mailto:alevia030@gmail.com" class="contact-item reveal">
+        <span class="contact-icon">✉️</span>
+        <div class="contact-info">
+          <div class="contact-label">Email principal</div>
+          <div class="contact-value">alevia030@gmail.com</div>
+        </div>
+      </a>
+      <a href="mailto:jesuiales@gmail.com" class="contact-item reveal">
+        <span class="contact-icon">📧</span>
+        <div class="contact-info">
+          <div class="contact-label">Email auxiliar</div>
+          <div class="contact-value">jesuiales@gmail.com</div>
+        </div>
+      </a>
+      <a href="https://www.tiktok.com/@choco.en.bolivia" target="_blank" class="contact-item reveal">
+        <span class="contact-icon">🎵</span>
+        <div class="contact-info">
+          <div class="contact-label">TikTok</div>
+          <div class="contact-value">@choco.en.bolivia</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span>Alejandro Valdivia Montalvo</span> — Video Producer & Editor</p>
+  <p>Bolivia <span>·</span> GMT-4 <span>·</span> Disponible para trabajo remoto</p>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .project-card, .skill-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
