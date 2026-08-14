@@ -215,6 +215,33 @@
       margin-top: 8px; line-height: 1.4;
     }
 
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--black); }
+    .experience-list {
+      display: flex; flex-direction: column;
+      border-top: 1px solid rgba(245,240,232,.08);
+    }
+    .experience-item {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 40px;
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(245,240,232,.08);
+    }
+    .experience-role {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 600;
+      color: var(--cream);
+    }
+    .experience-org {
+      font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold); margin-top: 8px;
+    }
+    .experience-desc {
+      font-size: 15px; font-weight: 300; line-height: 1.8;
+      color: var(--gray);
+    }
+
     /* ── SERVICES / SKILLS ── */
     #skills { background: var(--black); }
     .skills-grid {
@@ -397,6 +424,7 @@
       .skills-grid { grid-template-columns: 1fr; }
       .projects-bento { grid-template-columns: 1fr; }
       .project-card.featured { grid-row: span 1; }
+      .experience-item { grid-template-columns: 1fr; gap: 8px; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
       body { cursor: auto; }
       #cursor { display: none; }
@@ -412,6 +440,7 @@
   <a href="#" class="nav-logo">AV<span>.</span></a>
   <ul class="nav-links">
     <li><a href="#about">Sobre mí</a></li>
+    <li><a href="#experience">Experiencia</a></li>
     <li><a href="#skills">Servicios</a></li>
     <li><a href="#projects">Proyectos</a></li>
     <li><a href="#contact">Contacto</a></li>
@@ -464,6 +493,35 @@
         <div class="stat-num">BOL</div>
         <div class="stat-label">Disponible para trabajo remoto desde Bolivia (GMT-4)</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Experiencia</div>
+  <h2>Experiencia</h2>
+  <div class="experience-list">
+    <div class="experience-item reveal">
+      <div>
+        <div class="experience-role">Producción de Video, Edición & Filmmaker</div>
+        <div class="experience-org">Choco en Bolivia</div>
+      </div>
+      <p class="experience-desc">Grabación, dirección y edición de contenido audiovisual para el canal, mostrando la cultura, gastronomía y turismo boliviano en TikTok.</p>
+    </div>
+    <div class="experience-item reveal">
+      <div>
+        <div class="experience-role">Producción de Video, Edición & Filmmaker</div>
+        <div class="experience-org">La Troje — Bar de Eventos Culturales & Música</div>
+      </div>
+      <p class="experience-desc">Cobertura y producción de contenido audiovisual para eventos culturales y musicales en vivo, capturando la energía del espacio para redes sociales.</p>
+    </div>
+    <div class="experience-item reveal">
+      <div>
+        <div class="experience-role">Producción de Video, Edición & Filmmaker</div>
+        <div class="experience-org">Alfa Nova — Inmobiliaria</div>
+      </div>
+      <p class="experience-desc">Producción y edición de video promocional para propiedades e inmuebles, orientado a redes sociales y campañas digitales.</p>
     </div>
   </div>
 </section>
